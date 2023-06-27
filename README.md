@@ -6,13 +6,16 @@ Autodoc is a web service that transforms documents into decision-ready data usin
 
 This is the client running at https://autodocai.com
 
-Features:
+## Features
+
 - Reusable templates to extract data
 - Vector-based retrieval and LLM-based extraction of data fields 
 - Exposed API 
 
-Real-world application:
-- An insurance startup uses Autodoc to extract data from hundreds of insurance policies to present final copies 
+## Applications
 
-How it works:
+- Insurance startup uses Autodoc to automate extracting data from thousands of insurance policies to present quotes to new customers 7-10x faster than previous human-only approach.
+
+## How it works
+
 ![autodocflow](https://raw.githubusercontent.com/felgueres/autodoc/main/public/flow.png)
