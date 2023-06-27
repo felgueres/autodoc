@@ -15,4 +15,4 @@ Real-world application:
 - An insurance startup uses Autodoc to extract data from hundreds of insurance policies to present final copies 
 
 How it works:
-![autodocflow]("https://raw.githubusercontent.com/felgueres/autodoc/main/public/flow.png")
+![autodocflow](https://raw.githubusercontent.com/felgueres/autodoc/main/public/flow.png)
