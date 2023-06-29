@@ -3,7 +3,7 @@ import { HOST } from '../constants';
 import { AppContext } from '../Contexts/AppContext';
 
 interface IUsePDF {
-    sourceId: string,
+    sourceId: string | null,
 }
 
 export default function usePDF({ sourceId }: IUsePDF) {
@@ -13,7 +13,7 @@ export default function usePDF({ sourceId }: IUsePDF) {
     useEffect(() => {
         const UPLOAD_ENDPOINT = `${HOST}/v1/file`
         async function fetchFile() {
-            if (!storedToken) { return }
+            if (!storedToken || !sourceId) { return }
             try {
                 await fetch(`${UPLOAD_ENDPOINT}/${sourceId}`,
                     {
@@ -43,7 +43,7 @@ export default function usePDF({ sourceId }: IUsePDF) {
             }
         }
         fetchFile()
-    }, [storedToken])
+    }, [storedToken, sourceId])
 
     return { pdfURL }
 }

@@ -18,7 +18,10 @@ export type TReference = {
 }
 
 export type TFacts = {
-    facts: { [key: string]: string } | null,
+    [key: string]: {
+       value: string,
+       page_number: number, 
+    } | null
 }
 
 interface IExtractRequest {
@@ -33,11 +36,9 @@ export default function useExtract() {
     const { storedToken, chatbot, template } = useContext(AppContext)
     const [isSubmit, setIsSubmit] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [facts, setFacts] = useState<TFacts>({ facts: null, })
+    const [facts, setFacts] = useState<TFacts|null>(null);
     const { msgs, setMsgs } = useContext(AppContext)
-
-    console.log(facts)
-
+    
     useEffect(() => {
         async function fetchFacts() {
             if (!isSubmit || !template || !chatbot) { return }
@@ -62,9 +63,9 @@ export default function useExtract() {
                 .then((res) => {
                     if (res.ok) {
                         res.json().then((data) => {
-                            const r = data as TFacts
-                            const { facts } = r
-                            setFacts({ facts })
+                            const r = data 
+                            const facts = r.facts
+                            setFacts(facts)
                         })
                     }
                     else {

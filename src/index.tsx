@@ -11,7 +11,6 @@ import ChatbotEditor from './Views/ChatbotEditor';
 import { Toasts } from './Utils/Utils';
 import { PrivateRoute } from './Contexts/SupabaseContext';
 import ErrorBoundary from './Contexts/ErrorBoundary';
-import Demo from './Views/Demo';
 import NotFoundPage from './Views/Notfound';
 import Privacy from './Views/Privacy';
 import TemplateEditor from './Views/TemplateEditor';
@@ -32,7 +31,6 @@ root.render(
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Landing />} />
-                <Route element={<Demo />} path='/demo' />
                 <Route element={<Login />} path="/login" />
                 <Route element={<Document />} path="/documents/:botId" />
                 <Route element={<Pricing />} path="/pricing" />

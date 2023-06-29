@@ -1,10 +1,13 @@
-import { cloneElement, useContext } from "react";
+import { cloneElement, useContext, useEffect, useState } from "react";
 import '../input.css';
 import { Icons } from "../constants";
 import { AppContext } from "../Contexts/AppContext";
 import useChatBots from "../Hooks/useChatbots";
 import { SupabaseContext } from "../Contexts/SupabaseContext";
 import useExtract from "../Hooks/useSearch";
+import { TField } from "../Contexts/TemplateContext";
+import PDFViewer from "../Components/PDFViewer";
+import { THighlighItem } from "../Components/PDFViewer";
 
 export type TMode = 'embed' | 'app' | 'viewer' | 'demo'
 
@@ -14,18 +17,19 @@ export default function Extractor() {
     const { templates, loading, notFound } = useChatBots({ storedToken, type: 'templates' })
     const { facts, setFacts, loading: loadingFacts, setIsSubmit } = useExtract()
     const { chatbot, template, setTemplate, msgs, setMsgs } = useContext(AppContext)
+    const [highlightItem, setHighlightItem] = useState<THighlighItem | null>(null) 
 
     function handleReset() {
         setFacts({ facts: null });
     }
 
     function handleExport() {
-        if (!facts.facts){
-            setMsgs([{ type: 'warning', 'message': 'No facts to export', duration: 2000}])
+        if (!facts) {
+            setMsgs([{ type: 'warning', 'message': 'No facts to export', duration: 2000 }])
             return
-        } 
+        }
 
-        const csv = Object.entries(facts.facts).map(([key, val], i) => { return `${key},${val}` }).join('\n')
+        const csv = Object.entries(facts).map(([key, val], i) => { return `${key},${val}` }).join('\n')
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -50,40 +54,49 @@ export default function Extractor() {
         setIsSubmit(true)
     }
 
+    function FactItem({ fact }: { fact: TField }) {
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>, fact: TField) => {
+            if (!facts) { return }
+            const { name } = fact
+            const value = e.target.value
+            const pn = facts[name]?.page_number || 0
+            const newFacts = { ...facts, [name]: { value, page_number: pn } }
+            setFacts(newFacts)
+        }
+
+        const handleShowSource = () => {
+            if (!facts) { return }
+            setHighlightItem({ text: facts[fact.name]?.value ?? '', page_number: facts[fact.name]?.page_number ?? 0 }) 
+        }
+
+        return <>
+            <div className="group grid grid-cols-6 gap-0 text-sm py-2 px-2 hover:bg-gray-50 border-b" >
+                <div className="group-hover:bg-gray-50 col-span-2 cursor-pointer" onClick={handleShowSource}>
+                    <div className="flex items-center gap-2 h-full">
+                        <div className="w-[150px]">{fact.name}</div>
+                        {cloneElement(Icons.quick_reference_all, { className: 'w-5 h-5 cursor-pointer', })}
+                    </div>
+                </div>
+                <div className="group-hover:bg-gray-50 col-span-4">
+                    {facts && <input className="w-full text-sm p-1 border border-gray-200 rounded-sm" placeholder="Enter value" value={facts[fact.name]?.value} onChange={(e) => handleChange(e, fact)} />}
+                </div>
+            </div>
+        </>
+    }
+
     function Fields() {
         function renderTemplate() {
             if (!template) return <p className="text-sm text-gray-400">No template selected</p>
-            return template.fields.map((f, i) => {
-                return <div key={i} className="flex items-center w-full gap-2">
-                    <span className="text-sm w-[150px]"> {f.name} </span>
-                    {
-                        facts.facts &&
-                        <input className="flex-1 text-sm p-1 border border-gray-200 rounded-sm" placeholder="Enter value" value={facts.facts[f.name] ?? ''} onChange={(e) => {
-                            const newFacts = { ...facts.facts }
-                            newFacts[f.name] = e.target.value
-                            setFacts({ facts: newFacts })
-                        }} />
-                    }
-                    {
-                        loadingFacts &&
-                        <div className="flex-1 text-sm p-1 rounded-sm">
-                            <div className="w-20 h-4 bg-gray-200 rounded-md animate-pulse"></div>
-                        </div>
-                    }
+            return <>
+                <div className="w-full h-full">
+                    {template.fields.map((f, i) => { return <FactItem key={i} fact={f} /> })}
                 </div>
-            })
+            </>
         }
-
-        // return <div className="flex flex-col gap-2 mt-4">
-        //     <h1 className="text-base font-medium">Fields</h1>
-        //     {renderTemplate()}
-        // </div>
-
         return <div className="flex flex-col gap-2 mt-4">
-            <h1 className="text-base font-medium">Fields</h1>
             {renderTemplate()}
         </div>
-
     }
 
     return <>
@@ -111,6 +124,8 @@ export default function Extractor() {
             </div>
 
             <Fields />
+
+            <PDFViewer highlightItem={highlightItem}/> 
 
             <div className='flex h-8 flex-shrink-0' />
         </div>

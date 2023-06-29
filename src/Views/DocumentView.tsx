@@ -3,13 +3,10 @@ import { useNavigate, useParams } from "react-router-dom"
 import useChatBots from "../Hooks/useChatbots"
 import { SupabaseContext } from "../Contexts/SupabaseContext"
 import { AppContext } from "../Contexts/AppContext"
-import Source from "../Components/Source"
-import Chatbot from "./Chatbot"
 import NotFoundPage from "./Notfound"
 import Extractor from "./Extractor"
-import { Icons, VERSION } from "../constants"
+import { Icons} from "../constants"
 import CreateSidebar from "../Components/CreateSidebar"
-import Resources from "../Components/Resources"
 import { NavLink } from "react-router-dom"
 import { since } from "../Utils/Utils"
 
@@ -34,7 +31,6 @@ export default function Document() {
     // get state from navigate
     const { bot, notFound, setNotFound } = useChatBots({ storedToken, botId, 'type': 'bots' })
     const navigate = useNavigate()
-    const [showSource, setShowSource] = useState<boolean>(true)
 
     useEffect(() => {
         if (botId === null)
@@ -75,7 +71,6 @@ export default function Document() {
         </div>
     };
 
-
     function CopyId() {
         const [copied, setCopied] = useState<boolean>(false)
 
@@ -96,7 +91,7 @@ export default function Document() {
                 <div className="border-gray-200">
                     <div className="w-[56rem] h-full mx-auto flex flex-row gap-10 pt-5">
                         <div className="flex flex-col gap-5 w-[100px]">
-                            <span onClick={() => navigate('/')} className="font-semibold text-center text-xl tracking-tight cursor-pointer">Autodocs</span>
+                            <span onClick={() => navigate('/')} className="font-semibold text-center text-xl tracking-tight cursor-pointer">Autodoc</span>
                             <CreateSidebar />
                             <MyStatusPageComponent />
                         </div>
