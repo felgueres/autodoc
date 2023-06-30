@@ -15,7 +15,7 @@ export type ExtractTypes = 'text' | 'number' | 'date'
 export type TField = {
     name: string,
     type: ExtractTypes,
-    example: string,
+    description: string,
 }
 
 export type TTemplate = {
@@ -33,7 +33,7 @@ export const TemplateContext = createContext<TemplateProps>(
         reset: () => { },
         name: '',
         setName: () => { },
-        fields: [{ name: '', type: 'text', example: '' }],
+        fields: [{ name: '', type: 'text', description: '' }],
         setFields: () => { },
     })
 
@@ -44,11 +44,11 @@ type AppContextProviderProps = {
 export const TemplateProvider = ({ children }: AppContextProviderProps) => {
     const [template, setTemplate] = useState<TTemplate | null>(null)
     const [name, setName] = useState<string>('')
-    const [fields, setFields] = useState<TField[]>([{ name: '', type: 'text', example: '' }])
+    const [fields, setFields] = useState<TField[]>([{ name: '', type: 'text', description: '' }])
     const reset = () => { 
         setTemplate(null) 
         setName('')
-        setFields([{ name: '', type: 'text', example: '' }])
+        setFields([{ name: '', type: 'text', description: '' }])
     }
     const templateContextValue = {
         template,

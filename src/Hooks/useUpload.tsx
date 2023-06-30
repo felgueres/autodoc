@@ -63,7 +63,7 @@ export default function useUpload({ setNewDataHash, storedToken, file, isUpload,
     const [userData, setUserData] = useState<TUserData | null>(null)
 
     useEffect(() => {
-        const UPLOAD_ENDPOINT = `${HOST}/upload`
+        const UPLOAD_ENDPOINT = `${HOST}/v1/file/upload`
         async function fetchUpload() {
             if (!storedToken) { return }
             if (!file) { return }

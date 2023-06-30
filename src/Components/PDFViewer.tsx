@@ -37,7 +37,12 @@ export default function PDFViewer({ highlightItem }: { highlightItem?: THighligh
     }
 
     function highlightPattern(text: string, pattern: string) {
-        return text.replace(pattern, (value)=> `<mark>${value}</mark>`)
+        // split the pattern into words and create a regex pattern that matches full words only
+        const words = pattern.split(' ')
+        const wordPattern = new RegExp(`\\b(${words.join('|')})\\b`, 'gi')
+        console.log(wordPattern)
+        
+        return text.replace(wordPattern, (value) => `<mark>${value}</mark>`)
     }
 
     const textRenderer = useCallback((textItem: any) => highlightPattern(textItem.str, searchText), [searchText])
@@ -71,8 +76,10 @@ export default function PDFViewer({ highlightItem }: { highlightItem?: THighligh
                 <Document renderMode="canvas" onLoadSuccess={onDocumentLoadSuccess} file={pdfURL} onLoadError={handleError} >
                     <Page 
                         width={Math.min(width * 0.45, 1000)}
+                        scale={1}
                         pageNumber={pageNumber} 
                         customTextRenderer={textRenderer}
+                        renderAnnotationLayer={false}
                     />
                 </Document>
             </div>

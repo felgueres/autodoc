@@ -8,6 +8,7 @@ import useExtract from "../Hooks/useSearch";
 import { TField } from "../Contexts/TemplateContext";
 import PDFViewer from "../Components/PDFViewer";
 import { THighlighItem } from "../Components/PDFViewer";
+import Modal from "../Modals/Modal";
 
 export type TMode = 'embed' | 'app' | 'viewer' | 'demo'
 
@@ -17,7 +18,7 @@ export default function Extractor() {
     const { templates, loading, notFound } = useChatBots({ storedToken, type: 'templates' })
     const { facts, setFacts, loading: loadingFacts, setIsSubmit } = useExtract()
     const { chatbot, template, setTemplate, msgs, setMsgs } = useContext(AppContext)
-    const [highlightItem, setHighlightItem] = useState<THighlighItem | null>(null) 
+    const [highlightItem, setHighlightItem] = useState<THighlighItem | null>(null)
 
     function handleReset() {
         setFacts({ facts: null });
@@ -55,6 +56,15 @@ export default function Extractor() {
     }
 
     function FactItem({ fact }: { fact: TField }) {
+        const [pageAvailable, setPageAvailable] = useState(false)
+
+        useEffect(() => {
+            if (!facts) { return }
+            const { name } = fact
+            const f = facts[name]
+            if (!f) { return }
+            setPageAvailable(f.page_number > 0)
+        }, [facts])
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>, fact: TField) => {
             if (!facts) { return }
@@ -67,15 +77,18 @@ export default function Extractor() {
 
         const handleShowSource = () => {
             if (!facts) { return }
-            setHighlightItem({ text: facts[fact.name]?.value ?? '', page_number: facts[fact.name]?.page_number ?? 0 }) 
+            const { name } = fact
+            const f = facts[name]
+            if (!f || !pageAvailable) { return }
+            setHighlightItem({ text: f.value, page_number: f.page_number })
         }
 
         return <>
-            <div className="group grid grid-cols-6 gap-0 text-sm py-2 px-2 hover:bg-gray-50 border-b" >
-                <div className="group-hover:bg-gray-50 col-span-2 cursor-pointer" onClick={handleShowSource}>
+            <div className={`group grid grid-cols-6 gap-0 text-sm py-2 px-2 hover:bg-gray-50 border-b`}>
+                <div className={`group-hover:bg-gray-50 col-span-2 ${pageAvailable ? 'cursor-pointer' : ''}`} onClick={handleShowSource}>
                     <div className="flex items-center gap-2 h-full">
                         <div className="w-[150px]">{fact.name}</div>
-                        {cloneElement(Icons.quick_reference_all, { className: 'w-5 h-5 cursor-pointer', })}
+                        {cloneElement(Icons.quick_reference_all, { className: `w-5 h-5 fill-current ${pageAvailable ? 'text-gray-500' : 'text-gray-200'}` })}
                     </div>
                 </div>
                 <div className="group-hover:bg-gray-50 col-span-4">
@@ -125,9 +138,12 @@ export default function Extractor() {
 
             <Fields />
 
-            <PDFViewer highlightItem={highlightItem}/> 
-
             <div className='flex h-8 flex-shrink-0' />
         </div>
+        <Modal onClose={() => setHighlightItem(null)} open={highlightItem !== null}>
+            <div className="h-1/2">
+                <PDFViewer highlightItem={highlightItem} />
+            </div>
+        </Modal>
     </>
 }

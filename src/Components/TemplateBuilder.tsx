@@ -35,7 +35,6 @@ export default function TemplateBuilder({ mode }: { mode: 'new' | 'edit' }) {
     const { template:t, notFound } = useChatBots({ storedToken, botId , 'type': 'templates'}) // local
     const navigate = useNavigate()
 
-
     useEffect(() => {
         if (mode === 'new') {
             setTemplate({
@@ -58,7 +57,7 @@ export default function TemplateBuilder({ mode }: { mode: 'new' | 'edit' }) {
         }
     }, [botId, mode, template, t])
 
-    function handleAddField() { setFields([...fields, { name: '', type: 'text', example: '' }]) }
+    function handleAddField() { setFields([...fields, { name: '', type: 'text', description: '' }]) }
 
     if (notFound) { navigate('/404') }
 
@@ -88,7 +87,7 @@ export default function TemplateBuilder({ mode }: { mode: 'new' | 'edit' }) {
                     <thead className="uppercase">
                         <tr className="border-b-2">
                             <th className="text-left px-1 py-1 font-normal text-xs">Name</th>
-                            <th className="text-center px-1 font-normal text-xs">Example</th>
+                            <th className="text-center px-1 font-normal text-xs">Description</th>
                             <th className="text-center px-1 font-normal text-xs">Type</th>
                             <th className="text-center px-1 font-normal text-xs">Actions</th>
                         </tr>
@@ -105,9 +104,9 @@ export default function TemplateBuilder({ mode }: { mode: 'new' | 'edit' }) {
                                         }} className="py-1 px-2 w-full" />
                                     </td>
                                     <td className="border">
-                                        <input type="text" placeholder="Enter example" value={field.example} onChange={(e) => {
+                                        <input type="text" placeholder="Enter example" value={field.description} onChange={(e) => {
                                             const newFields = [...fields]
-                                            newFields[index].example = e.target.value
+                                            newFields[index].description= e.target.value
                                             setFields(newFields)
                                         }} className="py-1 px-2 w-full" />
                                     </td>

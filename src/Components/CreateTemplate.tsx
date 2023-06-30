@@ -23,7 +23,7 @@ export default function CreateTemplate({ inputType, mode }: ICreateNavbar) {
 
     useEffect(() => { if (mode === 'edit' && !templateId) { navigate('/') } }, [templateId, mode, navigate])
 
-    function isFilled() { return fields.every((field) => field.name && field.example) }
+    function isFilled() { return fields.every((field) => field.name && field.description) }
 
     const handleCreate = async () => {
         if (!isFilled() || !template) return alert('Please fill in all fields')
