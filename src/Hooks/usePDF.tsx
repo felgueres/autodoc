@@ -24,6 +24,7 @@ export default function usePDF({ sourceId }: IUsePDF) {
                     })
                     .then((res) => {
                         if (res.ok && res.body) {
+                            console.log(res)
                             const reader = res.body.getReader()
                             const chunks: Uint8Array[] = [];
                             reader.read().then(function processResult(result): any {

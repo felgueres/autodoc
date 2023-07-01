@@ -12,21 +12,17 @@ export function cleanURL(url: string) {
 }
 
 export function domain(url: string) {
-    // gets domain from url
     var domain = url.replace(/https?:\/\//, "").split('/')[0]
     return domain
 }
 
 export function removeFileExtension(filename: string) {
-    // removes file extension from filename
     return filename.split('.').slice(0, -1).join('.')
 }
 
 export const LoadingLine = ({ loading, center }: { loading: boolean, center: boolean }) => <div className={`gradient-wrapper max-w-200 mt-1 ${center ? 'mx-auto' : ''}`}>
     <div className={`gradient-line ${loading ? 'loading' : ''}`}></div>
 </div>
-
-// Write a toast component that takes a message and duration as props usign tailwind css
 
 export type TToast = {
     message: string;

@@ -61,6 +61,7 @@ function FileStats() {
 function Thumbnail() {
     const { file } = useContext(AppContext)
     const [error, setError] = useState<boolean>(false)
+
     if (!file) return null
 
     if (error) {
@@ -78,7 +79,7 @@ function Thumbnail() {
 
     return (
         <div className="border">
-            <Document onLoadError={() => setError(true)} file={file}>
+            <Document renderMode="canvas" onLoadError={(e) => console.log(e)} file={file}>
                 <Page width={220} scale={1} renderAnnotationLayer={false} renderTextLayer={false} pageNumber={1} />
             </Document>
         </div>
@@ -91,7 +92,7 @@ export function FileSummary() {
     return (
         <>
             <div className="border flex items-center flex-col bg-gray-50 rounded-sm py-4 gap-4">
-                <Thumbnail />
+                {/* <Thumbnail /> TODO: Broken */}
                 <FileStats />
             </div>
         </>
