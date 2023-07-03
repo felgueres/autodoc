@@ -74,9 +74,6 @@ export default function PDFViewer({ highlightItem }: { highlightItem?: THighligh
     return <>
         <div className="flex flex-col">
             <PageControls />
-            <div>
-                <input type="text" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
-            </div>
             <div className="w-full h-full">
                 <Document renderMode="canvas" onLoadSuccess={onDocumentLoadSuccess} file={pdfURL} onLoadError={handleError} >
                     <Page 
