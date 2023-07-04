@@ -14,14 +14,14 @@ export default function Footer() {
     return <div className="bg-white mb-4 border-t px-5">
         <nav className="w-full sm:w-[56rem] flex items-center justify-between py-4 bg-white mx-auto">
             <div className="flex items-center gap-2">
-                <Link to='/' className="font-semibold text-xl tracking-tight cursor-pointer">Autodocs</Link>
+                <Link to='/' className="font-semibold text-xl tracking-tight cursor-pointer">Autodoc AI</Link>
             </div>
             <div className="mt-1 flex items-center pr-4">
                 <a href="/privacy" className="ml-4 text-sm text-gray-500 hover:text-gray-700">Terms</a>
                 <Link to="/pricing" className="ml-4 text-sm text-gray-500 hover:text-gray-700">Pricing</Link>
-                <Link to='https://twitter.com/tryupstream' target="_blank" rel="noreferrer" className="ml-4 text-sm ">
+                {/* <Link to='https://twitter.com/tryupstream' target="_blank" rel="noreferrer" className="ml-4 text-sm ">
                     <img src="/assets/twitter.svg" alt="twitter" className="w-5 h-5 ml-2" />
-                </Link>
+                </Link> */}
             </div>
         </nav>
 

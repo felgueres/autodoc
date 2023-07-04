@@ -1,7 +1,6 @@
 import { useContext, useEffect } from "react"
 import { AppContext } from "../Contexts/AppContext";
 import CreateSidebar from "../Components/CreateSidebar";
-import Resources from "../Components/Resources";
 import { SupabaseContext } from "../Contexts/SupabaseContext";
 import Landing from "./Landing";
 import { useNavigate } from "react-router-dom";

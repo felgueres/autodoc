@@ -4,9 +4,8 @@ import { Icons } from "../constants"
 import Modal from "../Modals/Modal"
 
 export const supportMap: { [key: string]: string } = {
-    'email': 'mailto:hi@upstreamapi.com?subject=I%20need%20help%20with%20',
-    'twitter': 'https://twitter.com/intent/tweet?text=@tryupstream%20I%20need%20help%20with%20',
-    'whatsapp': 'https://chat.whatsapp.com/IOB1VZhkbIoB5BwmzIidP1'
+    // 'twitter': 'https://twitter.com/intent/tweet?text=@tryupstream%20I%20need%20help%20with%20',
+    'whatsapp': 'https://chat.whatsapp.com/IOB1VZhkbIoB5BwmzIidP1',
 }
 
 export default function Resources() {

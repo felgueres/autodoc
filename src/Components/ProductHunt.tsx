@@ -24,7 +24,7 @@ export default function ProductHunt() {
             <div className="p-5 bg-white flex flex-col">
                 <nav className="flex items-center justify-between mb-2 px-2 w-full border-b py-4">
                     <div className="sm:flex items-center justify-center flex-1">
-                        <h1 className="text-2xl font-bold">Get support</h1>
+                        <h1 className="text-2xl font-bold">Need help?</h1>
                     </div>
                     <div className="flex cursor-pointer items-center gap-2" onClick={() => handleCloseModal()}>
                         {cloneElement(Icons.close, { className: 'w-5 h-5' })}

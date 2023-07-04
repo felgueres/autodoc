@@ -3,8 +3,9 @@ import { SupabaseContext } from "../Contexts/SupabaseContext";
 import { Icons } from "../constants";
 
 export const valueMap: { [key: string]: { description: string, title: string } } = {
-    'instantQuestions': { description: 'Speed up extraction with high accuracy.', title: 'Extract in seconds, not hours'},
-    'fast': { description: 'Eliminate repetitive low value work.', title: '10X productivity boost'},
+    'instantQuestions': { description: 'Cut down document processing time from hours to seconds', title: 'Make your business move faster'},
+    'fast': { description: 'Decrease human errors with our data validation tools', title: 'Get data you can trust'},
+    'ai': { description: 'Use plain english to describe what you need to extract from a document', title: 'Build using powerful AI'},
 }
 
 export default function HowItHelps() {
@@ -24,6 +25,8 @@ export default function HowItHelps() {
                                 var icon = Icons.bolt; break;
                             case 'fast':
                                 var icon = Icons.time; break;
+                            case 'ai':
+                                var icon = Icons.fast_forward; break;
                             default:
                                 var icon = Icons.help
                         }

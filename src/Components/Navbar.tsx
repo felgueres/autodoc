@@ -6,13 +6,11 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
     const { session } = useContext(SupabaseContext)
-    const email = session?.user?.email
     const navigate = useNavigate()
-    const firstLetter = email?.charAt(0).toUpperCase()
     return <div className="bg-white border-b py-1 px-5">
         <nav className="w-full  sm:max-w-[56rem] flex items-center justify-between py-1 bg-white mx-auto">
             <div className="flex items-center gap-2">
-                <span onClick={() => navigate('/')} className="font-semibold text-xl tracking-tight cursor-pointer">Autodocs</span>
+                <span onClick={() => navigate('/')} className="font-semibold text-xl tracking-tight cursor-pointer">Autodoc AI</span>
             </div>
             <div className="mt-1 flex items-center">
                 {session ? <></> : <>

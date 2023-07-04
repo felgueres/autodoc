@@ -39,12 +39,12 @@ export default function Landing() {
                     <HowItHelps />
                 </div>
             </div>
-            <div className="bg-gray-50 border-t border-gray-200 py-10 px-5">
+            {/* <div className="bg-gray-50 border-t border-gray-200 py-10 px-5">
                 <div className="relative w-full sm:w-[56rem] mx-auto mt-12">
                     <HowItWorks />
                     <GetStarted />
                 </div>
-            </div>
+            </div> */}
             <div className="">
                 <Footer />
             </div>
