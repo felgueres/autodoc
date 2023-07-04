@@ -13,8 +13,6 @@ import Modal from "../Modals/Modal";
 export type TMode = 'embed' | 'app' | 'viewer' | 'demo'
 
 function Processing() {
-    const { session } = useContext(SupabaseContext)
-    const email = session?.user?.email
     return <>
         <div>
             <div className="flex items-center flex-col gap-4 text-sm py-5">
@@ -24,12 +22,6 @@ function Processing() {
                     Depending on the number of fields to extract, this may take 1-2 minutes.
                 </p>
             </div>
-            {/* { email &&
-                <div className="flex items-center flex-col gap-4 text-sm bg-gray-100 py-5">
-                    <p>We'll email the following address when it's done:</p>
-                    <p className="text-gray-500">{email}</p>
-                </div>
-            } */}
         </div>
     </>
 }
@@ -42,9 +34,9 @@ export default function Extractor() {
     const { chatbot, template, setTemplate, msgs, setMsgs } = useContext(AppContext)
     const [highlightItem, setHighlightItem] = useState<THighlighItem | null>(null)
 
-    function handleReset() {
-        setFacts({ facts: null });
-    }
+    // function handleReset() {
+    //     setFacts({ null });
+    // }
 
     function handleExport() {
         if (!facts) {
@@ -77,7 +69,7 @@ export default function Extractor() {
 
     function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.preventDefault()
-        handleReset()
+        // handleReset()
         setIsSubmit(true)
     }
 
