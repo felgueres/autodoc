@@ -78,7 +78,7 @@ export default function PDFViewer({ highlightItem }: { highlightItem?: THighligh
                 <Document renderMode="canvas" onLoadSuccess={onDocumentLoadSuccess} file={pdfURL} onLoadError={handleError} >
                     <Page 
                         width={Math.min(width * 0.45, 1000)}
-                        scale={1}
+                        scale={0.75}
                         pageNumber={pageNumber} 
                         customTextRenderer={textRenderer}
                         renderAnnotationLayer={false}

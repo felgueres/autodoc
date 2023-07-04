@@ -34,9 +34,9 @@ export default function Extractor() {
     const { chatbot, template, setTemplate, msgs, setMsgs } = useContext(AppContext)
     const [highlightItem, setHighlightItem] = useState<THighlighItem | null>(null)
 
-    // function handleReset() {
-    //     setFacts({ null });
-    // }
+    function handleReset() {
+        setFacts(null);
+    }
 
     function handleExport() {
         if (!facts) {
@@ -69,7 +69,7 @@ export default function Extractor() {
 
     function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.preventDefault()
-        // handleReset()
+        handleReset()
         setIsSubmit(true)
     }
 
@@ -110,11 +110,11 @@ export default function Extractor() {
                     </div>
                 </div>
                 <div className="group-hover:bg-gray-50 col-span-4">
-                    {facts && 
-                        <textarea 
-                            className="w-full text-sm p-1 border border-gray-200 rounded-sm whitespace-pre-line" 
-                            placeholder="Enter value" 
-                            value={facts[fact.name]?.value} 
+                    {facts &&
+                        <textarea
+                            className="w-full text-sm p-1 border border-gray-200 rounded-sm whitespace-pre-line"
+                            placeholder="Enter value"
+                            value={facts[fact.name]?.value}
                             onChange={(e) => handleChange(e, fact)} />}
                 </div>
             </div>
@@ -148,17 +148,18 @@ export default function Extractor() {
                         <select id="template" className="border border-gray-300 rounded-md px-2 py-1 text-sm mt-1" onChange={(e) => {
                             const templateId = e.target.value
                             const newTemplate = templates?.find((t) => t.template_id === templateId)
-                            setTemplate(newTemplate ?? null) }}>
+                            setTemplate(newTemplate ?? null)
+                        }}>
                             <option value="">Select a template</option>
                             {templates?.map((t) => { return <option key={t.template_id} value={t.template_id ?? ''}>{t.name}</option> })}
                         </select>
                     </div>
 
                     <div className="flex flex-col gap-3">
-                        <button disabled={!template} 
-                                id="extractor-form" 
-                                className={`${!template ? 'opacity-50  cursor-not-allowed' : 'cursor-pointer'} flex justify-center gap-2 items-center bg-indigo-500 text-white px-5 py-1 rounded-md`} onClick={(e) => { e.preventDefault(); handleClick(e) }}> 
-                                { loadingFacts ? cloneElement(Icons.progress_activity, { className: 'w-5 h-5 fill-current animate-spin' }) : 'Extract' }
+                        <button disabled={!template}
+                            id="extractor-form"
+                            className={`${!template ? 'opacity-50  cursor-not-allowed' : 'cursor-pointer'} flex justify-center gap-2 items-center bg-indigo-500 text-white px-5 py-1 rounded-md`} onClick={(e) => { e.preventDefault(); handleClick(e) }}>
+                            {loadingFacts ? cloneElement(Icons.progress_activity, { className: 'w-5 h-5 fill-current animate-spin' }) : 'Extract'}
                         </button>
                         <ExportCSV />
                     </div>
@@ -169,7 +170,9 @@ export default function Extractor() {
         </div>
 
         <Modal onClose={() => setHighlightItem(null)} open={highlightItem !== null}>
-            <PDFViewer highlightItem={highlightItem} />
+            <div className="">
+                <PDFViewer highlightItem={highlightItem} />
+            </div>
         </Modal>
     </>
 }

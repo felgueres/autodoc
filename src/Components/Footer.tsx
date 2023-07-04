@@ -17,6 +17,9 @@ export default function Footer() {
                 <Link to='/' className="font-semibold text-xl tracking-tight cursor-pointer">Autodoc AI</Link>
             </div>
             <div className="mt-1 flex items-center pr-4">
+                <div>
+                    <span className="ml-4 text-sm text-gray-500 hover:text-gray-700"> API (soon) </span>
+                </div>
                 <a href="/privacy" className="ml-4 text-sm text-gray-500 hover:text-gray-700">Terms</a>
                 <Link to="/pricing" className="ml-4 text-sm text-gray-500 hover:text-gray-700">Pricing</Link>
                 {/* <Link to='https://twitter.com/tryupstream' target="_blank" rel="noreferrer" className="ml-4 text-sm ">

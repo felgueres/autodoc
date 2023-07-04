@@ -88,7 +88,7 @@ export const plans: Record<string, IPlan> = {
     features: ['Everything in the free trial', 'Save with annual billing', 'Access to API'],
     desc: 'Streamline your workflow with unlimited processing and access to our API.',
     button: true,
-    func: () => { window.open('https://buy.stripe.com/9AQ8yw82w8EkexG6ox', '_blank') }
+    func: () => { window.open('https://calendly.com/pablo_upstream', '_blank') }
   }
 }
 

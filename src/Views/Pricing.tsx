@@ -17,7 +17,7 @@ export default function Pricing() {
             <Navbar />
             <div className="flex flex-col justify-center sm:mt-4">
                 <h1 className="flex justify-center">
-                    <span className="text-4xl sm:text-4xl font-semibold text-zinc-700">Pricing</span>
+                    <span className="text-4xl sm:text-4xl font-semibold text-zinc-700">Pricing plans</span>
                 </h1>
                 <h2 className="flex justify-center mt-2">
                     Transform documents into decision-ready data
@@ -38,7 +38,10 @@ export default function Pricing() {
                                     </li>)
                                 }
                             </ul>
-                            {plan.button && <button onClick={plan.func} className='mt-4 bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded'>Contact sales</button>}
+                            {plan.button && 
+                                <button onClick={plan.func} className='mt-4 bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded'>
+                                    Contact sales
+                                </button>}
                         </div>)
                     }
                 </div>

@@ -15,7 +15,9 @@ export default function Hero() {
             <div className="text-lg sm:text-xl text-center">
                 Autodoc helps you extract the data from documents that you need to run your business
             </div>
-            <div className="mt-2"> <Link to='/login' className="text-xl bg-indigo-500 text-white rounded-full px-8 py-3"> Get started for free </Link> </div>
+            <div className="mt-2"> 
+                <Link to='/login' className="text-xl bg-indigo-500 text-white rounded-full px-8 py-3"> Get started for free </Link> 
+            </div>
             <div className="flex items-center gap-2">
                 {cloneElement(Icons.check, { className: 'w-5 h-5 fill-current text-green-500' })}
                 <span className="text-sm text-gray-500">No credit card required</span>

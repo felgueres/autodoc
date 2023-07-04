@@ -37,7 +37,7 @@ export default function Home({ view }: { view: string }) {
             <div className="border-gray-200">
                 <div className="w-[56rem] mx-auto flex flex-row gap-10 py-5">
                     <div className="flex flex-col gap-5 w-[100px]">
-                        <span onClick={() => navigate('/')} className="font-semibold text-center text-xl tracking-tight cursor-pointer">Autodocs</span>
+                        <span onClick={() => navigate('/')} className="font-semibold text-center text-xl tracking-tight cursor-pointer">Autodoc</span>
                         <CreateSidebar />
                     </div>
                     <div className="flex flex-1 flex-col gap-5">

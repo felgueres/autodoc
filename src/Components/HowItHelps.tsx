@@ -5,7 +5,7 @@ import { Icons } from "../constants";
 export const valueMap: { [key: string]: { description: string, title: string } } = {
     'instantQuestions': { description: 'Cut down document processing time from hours to seconds', title: 'Make your business move faster'},
     'fast': { description: 'Decrease human errors with our data validation tools', title: 'Get data you can trust'},
-    'ai': { description: 'Use plain english to describe what you need to extract from a document', title: 'Build using powerful AI'},
+    'ai': { description: 'Use plain english to describe what you need to extract from a document', title: 'Build with powerful AI'},
 }
 
 export default function HowItHelps() {

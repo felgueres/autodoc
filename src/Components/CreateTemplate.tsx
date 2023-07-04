@@ -86,7 +86,6 @@ export default function CreateTemplate({ inputType, mode }: ICreateNavbar) {
             }
         }).then((res) => {
             if (res.ok) {
-                // setTriggerBotsRefresh(true)
                 setMsgs([...msgs, { type: 'success', message: 'Assistant deleted successfully.', duration: 2000 }])
                 navigate(`/templates`, { replace: true })
             }
@@ -97,8 +96,6 @@ export default function CreateTemplate({ inputType, mode }: ICreateNavbar) {
     }
 
     const handleCancel = () => {
-        const confirm = window.confirm('Are you sure you want to cancel? All your progress will be lost.')
-        if (!confirm) return
         reset()
         navigate('/')
     }

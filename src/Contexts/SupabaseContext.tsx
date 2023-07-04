@@ -27,7 +27,7 @@ export const Login = () => {
 
     return (
         <div className='flex flex-col items-center justify-center min-h-screen'>
-            <h1 className='text-3xl font-bold'>Welcome</h1>
+            <h1 className='text-3xl font-bold'>Welcome to Autodoc AI</h1>
             <Auth
                 supabaseClient={supabase}
                 appearance={{ theme: ThemeSupa, className: { container: 'w-[400px]' } }}
