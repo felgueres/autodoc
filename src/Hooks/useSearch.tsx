@@ -16,14 +16,7 @@ export type TReference = {
     n_tokens: number
 }
 
-export type TFacts = {
-    [key: string]: {
-        value: string,
-        page_number: number,
-    } | null
-}
-
-
+export type TFacts = Record<string, { value: string, page_number: number, }>
 
 interface IExtractRequest {
     template_id: string,
@@ -31,18 +24,50 @@ interface IExtractRequest {
     field_idx: number,
 }
 
-export default function useExtract() {
+export default function useExtract({ field_idx }: { field_idx: number }) {
+    // field_idx = -1 means extract all fields
     const { storedToken, chatbot, template, facts, setFacts } = useContext(AppContext)
     const [isSubmit, setIsSubmit] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        async function fetchFact() {
+            if (!isSubmit || !template || !chatbot || field_idx < 0) { return }
+            setLoading(true)
+
+            const field: IExtractRequest = {
+                "template_id": template.template_id as string,
+                "source_id": chatbot.sources[0].source_id,
+                "field_idx": field_idx,
+            }
+
+            await fetch(SEARCH_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${storedToken}`
+                },
+                body: JSON.stringify(field),
+
+            }).then((res) => {
+                if (res.ok) {
+                    res.json().then((data) => {
+                        const { data: { field, value, page_number } } = data
+                        const record = { [field]: { value, page_number } } as TFacts
+                        setFacts({ ...facts, ...record })
+                    })
+                }
+            })
+            setIsSubmit(false)
+            setLoading(false)
+        }
+        fetchFact()
+    }, [isSubmit])
+
+    useEffect(() => {
         async function fetchFacts() {
-            if (!isSubmit || !template || !chatbot) { return }
-            // setLoading(true)
-
-            console.log('facts useSearch', facts)
-
+            if (!isSubmit || !template || !chatbot || field_idx >= 0) { return }
+            setLoading(true)
             const requestsArr = template.fields.map((_, i) => {
                 const body: IExtractRequest = {
                     "template_id": template.template_id as string,
@@ -51,32 +76,43 @@ export default function useExtract() {
                 }
                 return body
             })
-    
-            try {
-                for (const field of requestsArr) {
-                    const res = await fetch(SEARCH_API, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${storedToken}`
-                        },
-                        body: JSON.stringify(field),
-                    });
-    
+
+            const requests = requestsArr.map((field) => {
+                return fetch(SEARCH_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${storedToken}`
+                    },
+                    body: JSON.stringify(field),
+                }).then((res) => {
                     if (res.ok) {
-                        const data = await res.json();
-                        const { data: {field , value, page_number } } = data
-                        const newFacts = { ...facts };
-                        console.log('facts useSearch 2.', facts)
-                        console.log('facts useSearch 3.', newFacts)
-                        newFacts[field] = { value, page_number } as { value: string, page_number: number };
-                        setFacts(newFacts);
+                        return res.json();
                     } else {
-                        console.log('Error:', res.status);
+                        return null;
+                    }
+                })
+            })
+
+            try {
+                const resolvers = await Promise.all(requests)
+
+                const records = resolvers.map((res) => {
+                    if (res) {
+                        const { data: { field, value, page_number } } = res
+                        const fact = { [field]: { value, page_number } } as TFacts
+                        return fact
+
+                    } else {
+                        return {}
                     }
                 }
-            } catch (error) {
-                console.log(error);
+                )
+                setFacts({ ...facts, ...records.reduce((acc, cur) => ({ ...acc, ...cur }), {}) })
+            }
+
+            catch (err) {
+                console.log(err)
             }
 
             setIsSubmit(false)
@@ -85,6 +121,7 @@ export default function useExtract() {
 
         fetchFacts()
 
-    }, [isSubmit, facts, setFacts])
-    return { loading, setIsSubmit }
+    }, [isSubmit])
+
+    return { loading, setIsSubmit, facts, setFacts }
 }

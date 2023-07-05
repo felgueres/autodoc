@@ -4,7 +4,7 @@ import { Icons } from "../constants";
 import { AppContext } from "../Contexts/AppContext";
 import useChatBots from "../Hooks/useChatbots";
 import { SupabaseContext } from "../Contexts/SupabaseContext";
-import useExtract from "../Hooks/useSearch";
+import useExtract, { TFacts } from "../Hooks/useSearch";
 import { TField, TTemplate } from "../Contexts/TemplateContext";
 import PDFViewer from "../Components/PDFViewer";
 import Modal from "../Modals/Modal";
@@ -25,13 +25,13 @@ function Processing() {
     </>
 }
 
-function Fields({ template, loadingFacts }: { template: TTemplate | null, loadingFacts: boolean }) {
+function Fields({ template }: { template: TTemplate | null }) {
     function renderTemplate() {
         if (!template) return <p className="text-sm text-gray-400">No template selected</p>
-        if (loadingFacts) return (<> <Processing /> </>)
+        // if (loadingFacts) return (<> <Processing /> </>)
         return <>
             <div className="w-full h-full">
-                {template.fields.map((f, i) => { return <FactItem key={i} fact={f} /> })}
+                {template.fields.map((f, i) => { return <FactItem field_idx={i} fact={f} /> })}
             </div>
         </>
     }
@@ -40,50 +40,57 @@ function Fields({ template, loadingFacts }: { template: TTemplate | null, loadin
     </div>
 }
 
-function FactItem({ fact }: { fact: TField }) {
+function FactItem({ fact: tFact, field_idx }: { fact: TField, field_idx: number }) {
     const [pageAvailable, setPageAvailable] = useState(false)
-    const { facts, setFacts, setHighlightItem } = useContext(AppContext)
-
-    console.log('facts', facts)
+    const { setHighlightItem, facts, setFacts } = useContext(AppContext)
+    const { loading, setIsSubmit } = useExtract({ field_idx })
 
     useEffect(() => {
         if (!facts) { return }
-        const f = facts[fact.name]
+        const f = facts[tFact.name]
         if (!f) { return }
         setPageAvailable(f.page_number > 0)
-    }, [facts])
+    }, [facts, setFacts])
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>, fact: TField) => {
         e.preventDefault()
         if (!facts) { return }
         const value = e.target.value
         const pn = facts[fact.name]?.page_number || 0
-        const newFacts = { ...facts, [fact.name]: { value, page_number: pn } }
+        const newFacts = { ...facts, [tFact.name]: { value, page_number: pn } }
         setFacts(newFacts)
     }
 
     const handleShowSource = () => {
-        if (!facts) {console.log('no facts'); return }
-        const f = facts[fact.name]
-        if (!f || !pageAvailable) { console.log('f', f); console.log('pageAvailable', pageAvailable); return } 
+        if (!facts) { console.log('no facts'); return }
+        const f = facts[tFact.name]
+        if (!f || !pageAvailable) { console.log('f', f); console.log('pageAvailable', pageAvailable); return }
         setHighlightItem({ text: f.value, page_number: f.page_number })
     }
 
     return <>
         <div className={`group grid grid-cols-6 gap-0 text-sm py-2 px-2 hover:bg-gray-50 border-b`}>
-            <div className={`group-hover:bg-gray-50 col-span-2 ${pageAvailable ? 'cursor-pointer' : ''}`} onClick={handleShowSource}>
+            <div className={`group-hover:bg-gray-50 col-span-2 `} >
                 <div className="flex items-center gap-2 h-full">
-                    <div className="w-[150px]">{fact.name}</div>
-                    {cloneElement(Icons.quick_reference_all, { className: `w-5 h-5 fill-current ${pageAvailable ? 'text-gray-500' : 'text-gray-200'}` })}
+                    <div className="w-[150px]">{tFact.name}</div>
+                    <div className={`${pageAvailable ? 'cursor-pointer' : ''}`} onClick={handleShowSource}>
+                        {cloneElement(Icons.quick_reference_all, { className: `w-5 h-5 fill-current ${pageAvailable ? 'text-gray-500' : 'text-gray-200'}` })}
+                    </div>
+                    <div className="cursor-pointer" onClick={() => setIsSubmit(true)}>
+                        {cloneElement(loading ? Icons.progress_activity : Icons.refresh, { className: `w-5 h-5 fill-current ${loading ? 'animate-spin' : ''}` })}
+                    </div>
                 </div>
             </div>
             <div className="group-hover:bg-gray-50 col-span-4">
-                {facts &&
-                    <textarea
-                        className="w-full text-sm p-1 border border-gray-200 rounded-sm whitespace-pre-line"
-                        placeholder="Enter value"
-                        value={facts[fact.name]?.value}
-                        onChange={(e) => handleChange(e, fact)} />}
+                <div className='flex items-center'>
+                    {facts &&
+                        <textarea
+                            className="w-full text-sm p-1 border border-gray-200 rounded-sm whitespace-pre-line"
+                            placeholder="Enter value"
+                            value={facts[tFact.name]?.value}
+                            onChange={(e) => handleChange(e, tFact)} />}
+
+                </div>
             </div>
         </div>
     </>
@@ -93,15 +100,15 @@ export default function Extractor() {
     const { session } = useContext(SupabaseContext)
     const storedToken = session?.access_token
     const { templates, loading, notFound } = useChatBots({ storedToken, type: 'templates' })
-    const { chatbot, template, setTemplate, setMsgs, facts, setFacts, highlightItem, setHighlightItem } = useContext(AppContext)
-    const { loading: loadingFacts, setIsSubmit } = useExtract()
+    const { chatbot, template, setTemplate, setMsgs, highlightItem, setHighlightItem, facts, setFacts } = useContext(AppContext)
+    const { loading : loadingFacts, setIsSubmit } = useExtract({ field_idx: -1 })
 
     // function handleReset() {
     //     setFacts(null);
     // }
 
     function handleExport() {
-        if (!facts) { setMsgs([{ type: 'warning', 'message': 'No facts to export', duration: 2000 }]) ; return null}
+        if (!facts) { setMsgs([{ type: 'warning', 'message': 'No facts to export', duration: 2000 }]); return null }
 
         const csv = Object
             .entries(facts)
@@ -153,13 +160,14 @@ export default function Extractor() {
                         <button disabled={!template}
                             id="extractor-form"
                             className={`${!template ? 'opacity-50  cursor-not-allowed' : 'cursor-pointer'} flex justify-center gap-2 items-center bg-indigo-500 text-white px-5 py-1 rounded-md`} onClick={(e) => { e.preventDefault(); handleClick(e) }}>
-                            {loadingFacts ? cloneElement(Icons.progress_activity, { className: 'w-5 h-5 fill-current animate-spin' }) : 'Extract'}
+                            Extract all
+                            {loadingFacts ? cloneElement(Icons.progress_activity, { className: 'w-5 h-5 fill-current animate-spin' }) : ''}
                         </button>
                         <ExportCSV />
                     </div>
                 </div>
             </div>
-            <Fields loadingFacts={loadingFacts} template={template} />
+            <Fields template={template} />
             <div className='flex h-8 flex-shrink-0' />
         </div>
 
