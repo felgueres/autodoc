@@ -1,13 +1,12 @@
-import { cloneElement, useContext, useEffect, useState } from "react";
 import '../input.css';
+import { cloneElement, useContext, useEffect, useState } from "react";
 import { Icons } from "../constants";
 import { AppContext } from "../Contexts/AppContext";
 import useChatBots from "../Hooks/useChatbots";
 import { SupabaseContext } from "../Contexts/SupabaseContext";
 import useExtract from "../Hooks/useSearch";
-import { TField } from "../Contexts/TemplateContext";
+import { TField, TTemplate } from "../Contexts/TemplateContext";
 import PDFViewer from "../Components/PDFViewer";
-import { THighlighItem } from "../Components/PDFViewer";
 import Modal from "../Modals/Modal";
 
 export type TMode = 'embed' | 'app' | 'viewer' | 'demo'
@@ -26,23 +25,83 @@ function Processing() {
     </>
 }
 
+function Fields({ template, loadingFacts }: { template: TTemplate | null, loadingFacts: boolean }) {
+    function renderTemplate() {
+        if (!template) return <p className="text-sm text-gray-400">No template selected</p>
+        if (loadingFacts) return (<> <Processing /> </>)
+        return <>
+            <div className="w-full h-full">
+                {template.fields.map((f, i) => { return <FactItem key={i} fact={f} /> })}
+            </div>
+        </>
+    }
+    return <div className="flex flex-col gap-2 mt-4">
+        {renderTemplate()}
+    </div>
+}
+
+function FactItem({ fact }: { fact: TField }) {
+    const [pageAvailable, setPageAvailable] = useState(false)
+    const { facts, setFacts, setHighlightItem } = useContext(AppContext)
+
+    console.log('facts', facts)
+
+    useEffect(() => {
+        if (!facts) { return }
+        const f = facts[fact.name]
+        if (!f) { return }
+        setPageAvailable(f.page_number > 0)
+    }, [facts])
+
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>, fact: TField) => {
+        e.preventDefault()
+        if (!facts) { return }
+        const value = e.target.value
+        const pn = facts[fact.name]?.page_number || 0
+        const newFacts = { ...facts, [fact.name]: { value, page_number: pn } }
+        setFacts(newFacts)
+    }
+
+    const handleShowSource = () => {
+        if (!facts) {console.log('no facts'); return }
+        const f = facts[fact.name]
+        if (!f || !pageAvailable) { console.log('f', f); console.log('pageAvailable', pageAvailable); return } 
+        setHighlightItem({ text: f.value, page_number: f.page_number })
+    }
+
+    return <>
+        <div className={`group grid grid-cols-6 gap-0 text-sm py-2 px-2 hover:bg-gray-50 border-b`}>
+            <div className={`group-hover:bg-gray-50 col-span-2 ${pageAvailable ? 'cursor-pointer' : ''}`} onClick={handleShowSource}>
+                <div className="flex items-center gap-2 h-full">
+                    <div className="w-[150px]">{fact.name}</div>
+                    {cloneElement(Icons.quick_reference_all, { className: `w-5 h-5 fill-current ${pageAvailable ? 'text-gray-500' : 'text-gray-200'}` })}
+                </div>
+            </div>
+            <div className="group-hover:bg-gray-50 col-span-4">
+                {facts &&
+                    <textarea
+                        className="w-full text-sm p-1 border border-gray-200 rounded-sm whitespace-pre-line"
+                        placeholder="Enter value"
+                        value={facts[fact.name]?.value}
+                        onChange={(e) => handleChange(e, fact)} />}
+            </div>
+        </div>
+    </>
+}
+
 export default function Extractor() {
     const { session } = useContext(SupabaseContext)
     const storedToken = session?.access_token
     const { templates, loading, notFound } = useChatBots({ storedToken, type: 'templates' })
-    const { facts, setFacts, loading: loadingFacts, setIsSubmit } = useExtract()
-    const { chatbot, template, setTemplate, msgs, setMsgs } = useContext(AppContext)
-    const [highlightItem, setHighlightItem] = useState<THighlighItem | null>(null)
+    const { chatbot, template, setTemplate, setMsgs, facts, setFacts, highlightItem, setHighlightItem } = useContext(AppContext)
+    const { loading: loadingFacts, setIsSubmit } = useExtract()
 
-    function handleReset() {
-        setFacts(null);
-    }
+    // function handleReset() {
+    //     setFacts(null);
+    // }
 
     function handleExport() {
-        if (!facts) {
-            setMsgs([{ type: 'warning', 'message': 'No facts to export', duration: 2000 }])
-            return
-        }
+        if (!facts) { setMsgs([{ type: 'warning', 'message': 'No facts to export', duration: 2000 }]) ; return null}
 
         const csv = Object
             .entries(facts)
@@ -69,73 +128,8 @@ export default function Extractor() {
 
     function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.preventDefault()
-        handleReset()
+        // handleReset()
         setIsSubmit(true)
-    }
-
-    function FactItem({ fact }: { fact: TField }) {
-        const [pageAvailable, setPageAvailable] = useState(false)
-
-        useEffect(() => {
-            if (!facts) { return }
-            const { name } = fact
-            const f = facts[name]
-            if (!f) { return }
-            setPageAvailable(f.page_number > 0)
-        }, [facts])
-
-        const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>, fact: TField) => {
-            if (!facts) { return }
-            const { name } = fact
-            const value = e.target.value
-            const pn = facts[name]?.page_number || 0
-            const newFacts = { ...facts, [name]: { value, page_number: pn } }
-            setFacts(newFacts)
-        }
-
-        const handleShowSource = () => {
-            if (!facts) { return }
-            const { name } = fact
-            const f = facts[name]
-            if (!f || !pageAvailable) { return }
-            setHighlightItem({ text: f.value, page_number: f.page_number })
-        }
-
-        return <>
-            <div className={`group grid grid-cols-6 gap-0 text-sm py-2 px-2 hover:bg-gray-50 border-b`}>
-                <div className={`group-hover:bg-gray-50 col-span-2 ${pageAvailable ? 'cursor-pointer' : ''}`} onClick={handleShowSource}>
-                    <div className="flex items-center gap-2 h-full">
-                        <div className="w-[150px]">{fact.name}</div>
-                        {cloneElement(Icons.quick_reference_all, { className: `w-5 h-5 fill-current ${pageAvailable ? 'text-gray-500' : 'text-gray-200'}` })}
-                    </div>
-                </div>
-                <div className="group-hover:bg-gray-50 col-span-4">
-                    {facts &&
-                        <textarea
-                            className="w-full text-sm p-1 border border-gray-200 rounded-sm whitespace-pre-line"
-                            placeholder="Enter value"
-                            value={facts[fact.name]?.value}
-                            onChange={(e) => handleChange(e, fact)} />}
-                </div>
-            </div>
-        </>
-    }
-
-    function Fields() {
-
-        function renderTemplate() {
-            if (!template) return <p className="text-sm text-gray-400">No template selected</p>
-            if (loadingFacts) return (<> <Processing /> </>)
-            return <>
-                <div className="w-full h-full">
-                    {template.fields.map((f, i) => { return <FactItem key={i} fact={f} /> })}
-                </div>
-            </>
-        }
-
-        return <div className="flex flex-col gap-2 mt-4">
-            {renderTemplate()}
-        </div>
     }
 
     return <>
@@ -165,7 +159,7 @@ export default function Extractor() {
                     </div>
                 </div>
             </div>
-            <Fields />
+            <Fields loadingFacts={loadingFacts} template={template} />
             <div className='flex h-8 flex-shrink-0' />
         </div>
 

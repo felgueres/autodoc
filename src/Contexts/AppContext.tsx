@@ -7,6 +7,8 @@ import { INITIAL_VALUES } from "../constants";
 import { IMessage } from "../Components/Chat";
 import { SupabaseContext } from "./SupabaseContext";
 import { TTemplate } from "./TemplateContext";
+import { TFacts } from "../Hooks/useSearch";
+import { THighlighItem } from "../Components/PDFViewer";
 
 export type AppProps = {
     msgs: Array<TToast>
@@ -52,6 +54,10 @@ export type AppProps = {
     setStoredToken: (storedToken: string | null) => void
     template: TTemplate | null
     setTemplate: (template: TTemplate | null) => void
+    facts: TFacts | null 
+    setFacts: (facts: TFacts | null) => void
+    highlightItem: THighlighItem | null
+    setHighlightItem: (highlightItem: THighlighItem | null) => void
 }
 
 export const AppContext = createContext<AppProps>({
@@ -98,6 +104,10 @@ export const AppContext = createContext<AppProps>({
         setStoredToken: () => { },
         template: null,
         setTemplate: () => { },
+        facts: null,
+        setFacts: () => { },
+        highlightItem: null,
+        setHighlightItem: () => { },
     })
 
 
@@ -128,6 +138,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
     const [visibility, setVisibility] = useState<'private'|'public'|'unlisted'>('public') 
     const [storedToken, setStoredToken] = useState<string|null>(null)
     const [template, setTemplate] = useState<TTemplate|null>(null)
+    const [facts, setFacts] = useState<TFacts | null>(null);
+    const [highlightItem, setHighlightItem] = useState<THighlighItem | null>(null)
     // Other
     const [bots, setBots] = useState<Array<IBot>>([])
     const [mode, setMode] = useState<string>('app')
@@ -157,6 +169,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         setVisibility('private')
         setStoredToken(null)
         setTemplate(null)
+        setFacts(null);
+        setHighlightItem(null)
     }
 
 
@@ -211,6 +225,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         setStoredToken,
         template,
         setTemplate,
+        facts,
+        setFacts,
+        highlightItem,
+        setHighlightItem,
     }
 
     return (

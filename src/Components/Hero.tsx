@@ -9,7 +9,7 @@ export default function Hero() {
     return <>
         <div className="flex items-center justify-center flex-col w-full px-5 py-4 rounded-lg gap-5">
             <div className="h-8" />
-            <p className="font-bold text-3xl sm:text-5xl">
+            <p className="font-bold text-3xl sm:text-5xl text-center">
                 AI-first document automation
             </p>
             <div className="text-lg sm:text-xl text-center">

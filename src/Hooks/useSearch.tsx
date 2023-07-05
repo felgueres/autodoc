@@ -32,16 +32,16 @@ interface IExtractRequest {
 }
 
 export default function useExtract() {
-    const { storedToken, chatbot, template } = useContext(AppContext)
+    const { storedToken, chatbot, template, facts, setFacts } = useContext(AppContext)
     const [isSubmit, setIsSubmit] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [facts, setFacts] = useState<TFacts | null>(null);
-    const { msgs, setMsgs } = useContext(AppContext)
 
     useEffect(() => {
         async function fetchFacts() {
             if (!isSubmit || !template || !chatbot) { return }
             // setLoading(true)
+
+            console.log('facts useSearch', facts)
 
             const requestsArr = template.fields.map((_, i) => {
                 const body: IExtractRequest = {
@@ -65,8 +65,12 @@ export default function useExtract() {
     
                     if (res.ok) {
                         const data = await res.json();
-                        const { data: {field, value, page_number } } = data
-                        setFacts((prevFacts) => ({ ...prevFacts, [field]: { value, page_number }}));
+                        const { data: {field , value, page_number } } = data
+                        const newFacts = { ...facts };
+                        console.log('facts useSearch 2.', facts)
+                        console.log('facts useSearch 3.', newFacts)
+                        newFacts[field] = { value, page_number } as { value: string, page_number: number };
+                        setFacts(newFacts);
                     } else {
                         console.log('Error:', res.status);
                     }
@@ -81,6 +85,6 @@ export default function useExtract() {
 
         fetchFacts()
 
-    }, [isSubmit])
-    return { loading, facts, setFacts, setIsSubmit }
+    }, [isSubmit, facts, setFacts])
+    return { loading, setIsSubmit }
 }
